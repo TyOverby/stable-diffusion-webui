@@ -50,9 +50,9 @@ set ACCELERATE="%VENV_DIR%\Scripts\accelerate.exe"
 if EXIST %ACCELERATE% goto :accelerate_launch
 
 :launch
-%PYTHON% launch.py --listen --enable-insecure-extension-access --no-half-vae --api --xformers %*
+%PYTHON% launch.py --listen --enable-insecure-extension-access --no-half-vae --api --cors-allow-origins "*" --xformers %*
 =======
-%PYTHON% launch.py --listen --enable-insecure-extension-access --no-half-vae --api --xformers %*
+%PYTHON% launch.py --listen --enable-insecure-extension-access --no-half-vae --api --cors-allow-origins "*" --xformers %*
 if EXIST tmp/restart goto :skip_venv
 pause
 exit /b
