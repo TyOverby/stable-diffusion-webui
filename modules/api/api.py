@@ -486,7 +486,7 @@ class Api:
                     shared.total_tqdm.clear()
 
         b64images = list(map(encode_pil_to_base64, processed.images)) if send_images else []
-        image_paths = [img.already_saved_as for img in processed.images] if txt2imgreq.save_images else []          
+        image_paths = [img.already_saved_as for img in processed.images] if txt2imgreq.save_images else []
 
         return models.TextToImageResponse(images=b64images, image_paths=image_paths, parameters=vars(txt2imgreq), info=processed.js())
 
@@ -558,7 +558,7 @@ class Api:
                     shared.total_tqdm.clear()
 
         b64images = list(map(encode_pil_to_base64, processed.images)) if send_images else []
-        image_paths = [img.already_saved_as for img in processed.images] if img2imgreq.save_images else []          
+        image_paths = [img.already_saved_as for img in processed.images] if img2imgreq.save_images else []
 
 
         if not img2imgreq.include_init_images:
