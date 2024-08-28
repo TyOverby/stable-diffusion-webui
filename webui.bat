@@ -1,6 +1,11 @@
 @echo off
 
+if exist webui.settings.bat (
+    call webui.settings.bat
+)
+
 if not defined PYTHON (set PYTHON=python)
+if defined GIT (set "GIT_PYTHON_GIT_EXECUTABLE=%GIT%")
 if not defined VENV_DIR (set "VENV_DIR=%~dp0%venv")
 
 set SD_WEBUI_RESTART=tmp/restart
@@ -32,12 +37,18 @@ if %ERRORLEVEL% == 0 goto :activate_venv
 for /f "delims=" %%i in ('CALL %PYTHON% -c "import sys; print(sys.executable)"') do set PYTHON_FULLNAME="%%i"
 echo Creating venv in directory %VENV_DIR% using python %PYTHON_FULLNAME%
 %PYTHON_FULLNAME% -m venv "%VENV_DIR%" >tmp/stdout.txt 2>tmp/stderr.txt
-if %ERRORLEVEL% == 0 goto :activate_venv
+if %ERRORLEVEL% == 0 goto :upgrade_pip
 echo Unable to create venv in directory "%VENV_DIR%"
 goto :show_stdout_stderr
 
+:upgrade_pip
+"%VENV_DIR%\Scripts\Python.exe" -m pip install --upgrade pip
+if %ERRORLEVEL% == 0 goto :activate_venv
+echo Warning: Failed to upgrade PIP version
+
 :activate_venv
 set PYTHON="%VENV_DIR%\Scripts\Python.exe"
+call "%VENV_DIR%\Scripts\activate.bat"
 echo venv %PYTHON%
 
 :skip_venv
@@ -50,9 +61,7 @@ set ACCELERATE="%VENV_DIR%\Scripts\accelerate.exe"
 if EXIST %ACCELERATE% goto :accelerate_launch
 
 :launch
-%PYTHON% launch.py --listen --enable-insecure-extension-access --no-half-vae --api --cors-allow-origins "*" --xformers %*
-=======
-%PYTHON% launch.py --listen --enable-insecure-extension-access --no-half-vae --api --cors-allow-origins "*" --xformers %*
+%PYTHON% launch.py %*
 if EXIST tmp/restart goto :skip_venv
 pause
 exit /b
